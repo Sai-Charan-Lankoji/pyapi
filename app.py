@@ -103,6 +103,11 @@ parser = ResumeParser(GEMINI_API_KEY)
 def index():
     return "Server is running"
 
+@app.route('/healthz', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'ok'}), 200
+
+
 @app.route('/', methods=['POST'])
 def parse_resume_endpoint():
     # Check if a file was sent in the request
