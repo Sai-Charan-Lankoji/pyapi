@@ -1,0 +1,14 @@
+name: Health Check
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # Runs every 10 minutes
+  
+jobs:
+  health_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send GET request to health endpoint
+        run: |
+          curl -s https://pyapi-0d1h.onrender.com/healthz > /dev/null
