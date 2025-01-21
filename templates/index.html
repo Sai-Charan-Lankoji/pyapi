@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Parser</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Add your custom styles here */
+        body {
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: #fff;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #185a9d;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Add your custom animations here */
+        @keyframes slideIn {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .container {
+            animation: slideIn 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Resume Parser</h1>
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="resumeFile" class="file-input-label">Upload your resume (PDF)</label>
+                <input type="file" class="form-control-file file-input" id="resumeFile" name="file" required>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Add your custom JavaScript here
+        document.addEventListener("DOMContentLoaded", function() {
+            const fileInput = document.getElementById("resumeFile");
+            const form = document.querySelector("form");
+
+            fileInput.addEventListener("change", function() {
+                form.submit();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import fitz
 import re
 import json
@@ -101,14 +101,14 @@ parser = ResumeParser(GEMINI_API_KEY)
 
 @app.route('/', methods=['GET'])
 def index():
-    return "Server is running"
+     return render_template('index.html')  # Render the UI template
 
 @app.route('/healthz', methods=['GET'])
 def health_check():
     return jsonify({'status': 'ok'}), 200
 
 
-@app.route('/', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def parse_resume_endpoint():
     # Check if a file was sent in the request
     if 'file' not in request.files:
@@ -119,6 +119,10 @@ def parse_resume_endpoint():
     # Check if a file was selected
     if file.filename == '':
         return jsonify({'error': 'No file selected'}), 400
+    
+    # Check if the file is a PDF
+    if file.filename.rsplit('.', 1)[1].lower() != 'pdf':
+        return jsonify({'error': 'Invalid file type. Only PDF files are allowed'}), 400
     
     if file and allowed_file(file.filename):
         try:
