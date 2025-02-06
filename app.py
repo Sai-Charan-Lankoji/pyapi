@@ -1,18 +1,22 @@
 import os
-from flask import Flask, request, jsonify, render_template
-import fitz
-import re
-import json
-import google.generativeai as genai
 import io
+import json
+import re
+from flask import Flask, request, jsonify, render_template
+import fitz  # PyMuPDF for PDF processing
+import google.generativeai as genai
 from werkzeug.utils import secure_filename
 from typing import Dict, Any, Optional
 from dotenv import load_dotenv
+from flask_cors import CORS, cross_origin  # Import CORS
 
 # Load environment variables from .env file
 load_dotenv()
 
 app = Flask(__name__)
+
+# Enable CORS for all routes, allowing requests from Angular frontend
+CORS(app, resources={r"/*": {"origins": "http://localhost:4200"}})
 
 # Configure upload folder and max file size
 UPLOAD_FOLDER = 'uploads'
@@ -101,29 +105,29 @@ parser = ResumeParser(GEMINI_API_KEY)
 
 @app.route('/', methods=['GET'])
 def index():
-     return render_template('index.html')  # Render the UI template
+    return render_template('index.html')  # Render the UI template
 
 @app.route('/healthz', methods=['GET'])
 def health_check():
     return jsonify({'status': 'ok'}), 200
 
-
 @app.route('/predict', methods=['POST'])
+@cross_origin(origin='http://localhost:4200', headers=['Content-Type', 'Authorization'])
 def parse_resume_endpoint():
     # Check if a file was sent in the request
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided'}), 400
-    
+
     file = request.files['file']
-    
+
     # Check if a file was selected
     if file.filename == '':
         return jsonify({'error': 'No file selected'}), 400
-    
+
     # Check if the file is a PDF
     if file.filename.rsplit('.', 1)[1].lower() != 'pdf':
         return jsonify({'error': 'Invalid file type. Only PDF files are allowed'}), 400
-    
+
     if file and allowed_file(file.filename):
         try:
             # Read the file content
@@ -139,8 +143,8 @@ def parse_resume_endpoint():
             
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-    
+
     return jsonify({'error': 'Invalid file type'}), 400
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=5000)  # Make it publicly accessible for deployment
+    app.run(debug=False, host='0.0.0.0', port=81)  
